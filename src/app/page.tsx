@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useLocale } from '@/contexts/LocaleContext';
+import logoSrc from '../../public/vosdecisions-logo.png';
 
 
 export default function HomePage() {
@@ -37,11 +38,6 @@ export default function HomePage() {
   const handleInitialArgConsumed = () => {
     setHashForQuery(null);
   };
-
-  // Simplified logoSrc logic.
-  // For custom domains, basePath is undefined in next.config.ts,
-  // so a root-relative path works correctly.
-  const logoSrc = "/vosdecisions-logo.png";
 
 
   useEffect(() => {
