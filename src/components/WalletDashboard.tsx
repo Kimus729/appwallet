@@ -3,11 +3,14 @@
 import React from 'react';
 import { useMultiversx } from '@/contexts/MultiversxContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Coins, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Coins, Image as ImageIcon, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 
 export function WalletDashboard() {
-  const { isConnected, address, balance, nfts, isLoading } = useMultiversx();
+  const { isConnected, address, balance, nfts, isLoading, page, totalNfts, pageSize, setPage } = useMultiversx();
+  
+  const totalPages = Math.ceil(totalNfts / pageSize);
 
   if (!isConnected) return null;
 
@@ -77,6 +80,37 @@ export function WalletDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                <div className="text-sm text-gray-500">
+                  Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, totalNfts)} of {totalNfts} assets
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(Math.max(1, page - 1))}
+                    disabled={page === 1 || isLoading}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <div className="text-sm font-medium w-20 text-center">
+                    Page {page} of {totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(Math.min(totalPages, page + 1))}
+                    disabled={page === totalPages || isLoading}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>

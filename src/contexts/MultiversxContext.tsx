@@ -24,6 +24,10 @@ type MultiversxContextType = {
   balance: string;
   nfts: NFT[];
   isLoading: boolean;
+  page: number;
+  totalNfts: number;
+  pageSize: number;
+  setPage: (page: number) => void;
   connectExtension: () => Promise<void>;
   connectWebWallet: () => Promise<void>;
   disconnect: () => Promise<void>;
@@ -36,6 +40,9 @@ export function MultiversxProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string>('0');
   const [nfts, setNfts] = useState<NFT[]>([]);
+  const [totalNfts, setTotalNfts] = useState(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 12; // Adjusted for a nice grid
   const [isLoading, setIsLoading] = useState(false);
   const [webWalletProvider, setWebWalletProvider] = useState<WebWalletProvider | null>(null);
   const { selectedEnvironment } = useEnvironment();
@@ -70,8 +77,10 @@ export function MultiversxProvider({ children }: { children: ReactNode }) {
     } else {
       setBalance('0');
       setNfts([]);
+      setTotalNfts(0);
+      setPage(1);
     }
-  }, [address]);
+  }, [address, page]); // Refresh on address OR page change
 
   const refreshData = async () => {
     if (!address) return;
@@ -85,9 +94,13 @@ export function MultiversxProvider({ children }: { children: ReactNode }) {
         setBalance(balanceEGLD);
       }
 
-      // Fetch NFTs/SFTs
-      // The endpoint returns owned tokens. 
-      const nftsRes = await axios.get(`${mvxConfig.apiUrl}/accounts/${address}/nfts?size=100`);
+      // Fetch overall NFT count
+      const countRes = await axios.get(`${mvxConfig.apiUrl}/accounts/${address}/nfts/count`);
+      setTotalNfts(countRes.data || 0);
+
+      // Fetch NFTs/SFTs for current page
+      const from = (page - 1) * pageSize;
+      const nftsRes = await axios.get(`${mvxConfig.apiUrl}/accounts/${address}/nfts?from=${from}&size=${pageSize}`);
       if (nftsRes.data) {
         const mappedNfts: NFT[] = nftsRes.data.map((item: any) => ({
           identifier: item.identifier,
@@ -144,12 +157,15 @@ export function MultiversxProvider({ children }: { children: ReactNode }) {
     setAddress(null);
     setBalance('0');
     setNfts([]);
+    setTotalNfts(0);
+    setPage(1);
   };
 
   useEffect(() => {
     // When environment changes, we should refresh the providers and the data
     const wwp = new WebWalletProvider(`${mvxConfig.walletUrl}/show-unlock-page`);
     setWebWalletProvider(wwp);
+    setPage(1); // Reset page on network change
     if (address) {
       refreshData();
     }
@@ -163,6 +179,10 @@ export function MultiversxProvider({ children }: { children: ReactNode }) {
         balance,
         nfts,
         isLoading,
+        page,
+        totalNfts,
+        pageSize,
+        setPage,
         connectExtension,
         connectWebWallet,
         disconnect,
