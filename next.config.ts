@@ -5,8 +5,8 @@ const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
 
 // For a custom domain pointing to the root of the GitHub Pages site,
 // basePath should be undefined or an empty string.
-// If you were deploying to a subdirectory like kimus729.github.io/app, it would be '/app'.
-const basePathValue = undefined; 
+// Since you are deploying without a custom domain, it must be the repo name: '/appwallet'
+const basePathValue = isGithubActions ? '/appwallet' : undefined; 
 
 const nextConfig: NextConfig = {
   output: 'export', // Crucial for static site generation (GitHub Pages)
