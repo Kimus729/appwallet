@@ -8,8 +8,6 @@ import { LocaleProvider } from '@/contexts/LocaleContext';
 import { MultiversxProvider } from '@/contexts/MultiversxContext';
 import { translations, DEFAULT_LOCALE } from '@/config/locales';
 
-const basePath = process.env.NEXT_PUBLIC_GITHUB_ACTIONS === 'true' ? '/appwallet' : '';
-
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
@@ -33,17 +31,6 @@ const dmSerifDisplay = DM_Serif_Display({
 export const metadata: Metadata = {
   title: translations.appMetaTitle[DEFAULT_LOCALE],
   description: translations.appMetaDescription[DEFAULT_LOCALE],
-  icons: {
-    icon: `${basePath}/favicon.png`, // Default favicon
-    shortcut: `${basePath}/favicon.png`, // For older browsers/IE
-    apple: `${basePath}/favicon.png`, // For Apple touch icon (iOS home screen, Safari tab icon)
-    // You can add more specific sizes if you have them, e.g.:
-    // other: [
-    //   { rel: 'apple-touch-icon-precomposed', url: '/apple-touch-icon.png' }, // Older Apple
-    //   { rel: 'icon', type: 'image/png', sizes: '192x192', url: '/android-chrome-192x192.png' }, // Android
-    //   { rel: 'icon', type: 'image/png', sizes: '512x512', url: '/android-chrome-512x512.png' } // Android
-    // ],
-  },
 };
 
 export default function RootLayout({
