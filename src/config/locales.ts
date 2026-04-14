@@ -33,8 +33,8 @@ export const translations: Record<string, Record<Locale, string>> = {
     en: 'VM Query Tool',
   },
   footerCopyright: {
-    fr: '© VOSDECISIONS 2025',
-    en: '© VOSDECISIONS 2025',
+    fr: '© VOSDECISIONS 2026',
+    en: '© VOSDECISIONS 2026',
   },
   showText: {
     fr: 'Afficher',
@@ -247,6 +247,10 @@ export const translations: Record<string, Record<Locale, string>> = {
   wallet_balanceLabel: {
     fr: 'Solde',
     en: 'Balance',
+  },
+  wallet_myAssetsTitle: {
+    fr: 'Mes Actifs Digitaux',
+    en: 'My Digital Assets',
   },
 };
 

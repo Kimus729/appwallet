@@ -35,7 +35,6 @@ export function MultiversxWalletButton() {
       <div className="flex items-center gap-4">
         <div className="hidden md:flex flex-col items-end">
           <span className="text-sm font-semibold tracking-wide text-cyan-600">{shortenAddress(address)}</span>
-          <span className="text-xs text-muted-foreground">{balance} EGLD</span>
         </div>
         <Button variant="outline" size="sm" onClick={disconnect} className="gap-2 border-red-500/20 text-red-500 hover:bg-red-500/10">
           <XCircle className="w-4 h-4" />

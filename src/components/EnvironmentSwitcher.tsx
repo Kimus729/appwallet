@@ -33,11 +33,11 @@ export default function EnvironmentSwitcher() {
 
   if (isConnected) {
     return (
-      <div className="flex items-center px-3 py-1 rounded-md shadow-sm bg-card border border-border">
-        <span className="text-xs font-medium text-gray-500 mr-2">{t('environmentSwitcher_connectedTo')}</span>
-        <Badge variant="secondary" className="bg-cyan-100 text-cyan-700 hover:bg-cyan-100 border-none capitalize h-6">
+      <div className="flex items-center px-4 py-1.5 rounded-md shadow-sm bg-card border border-border">
+        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse mr-2" />
+        <span className="text-sm font-bold text-cyan-600 capitalize">
           {ENVIRONMENTS[selectedEnvironment].label}
-        </Badge>
+        </span>
       </div>
     );
   }
@@ -56,10 +56,10 @@ export default function EnvironmentSwitcher() {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0 mt-1">
-          <Select value={selectedEnvironment} onValueChange={handleValueChange}>
+          <Select value={selectedEnvironment} onValueChange={handleValueChange} disabled={isConnected}>
             <SelectTrigger
               id="environment-select-popover"
-              className="w-full h-10 text-sm focus:ring-primary rounded-md border-0 shadow-none focus:ring-offset-0" 
+              className={`w-full h-10 text-sm focus:ring-primary rounded-md border-0 shadow-none focus:ring-offset-0 ${isConnected ? 'opacity-70 cursor-not-allowed' : ''}`} 
               aria-label={t('environmentSwitcher_selectPlaceholder')}
             >
               <SelectValue placeholder={t('environmentSwitcher_selectPlaceholder')} />
