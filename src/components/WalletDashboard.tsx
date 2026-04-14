@@ -33,7 +33,7 @@ export function WalletDashboard() {
               </div>
             ) : nfts.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <p>No NFTs or SFTs found in this wallet.</p>
+                <p>{t('wallet_noAssetsFound')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -69,7 +69,7 @@ export function WalletDashboard() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
                 <div className="text-sm text-gray-500">
-                  Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, totalNfts)} of {totalNfts} assets
+                  {t('pagination_showing')} {(page - 1) * pageSize + 1} {t('pagination_to')} {Math.min(page * pageSize, totalNfts)} {t('pagination_of')} {totalNfts} {t('pagination_assets')}
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -81,8 +81,8 @@ export function WalletDashboard() {
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <div className="text-sm font-medium w-20 text-center">
-                    Page {page} of {totalPages}
+                  <div className="text-sm font-medium w-28 text-center">
+                    {t('pagination_page')} {page} {t('pagination_pageOf')} {totalPages}
                   </div>
                   <Button
                     variant="outline"

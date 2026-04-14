@@ -252,5 +252,33 @@ export const translations: Record<string, Record<Locale, string>> = {
     fr: 'Mes Actifs Digitaux',
     en: 'My Digital Assets',
   },
+  wallet_noAssetsFound: {
+    fr: 'Aucun NFT ou SFT trouvé dans ce portefeuille.',
+    en: 'No NFTs or SFTs found in this wallet.',
+  },
+  pagination_showing: {
+    fr: 'Affiche',
+    en: 'Showing',
+  },
+  pagination_to: {
+    fr: 'à',
+    en: 'to',
+  },
+  pagination_of: {
+    fr: 'de',
+    en: 'of',
+  },
+  pagination_assets: {
+    fr: 'actifs',
+    en: 'assets',
+  },
+  pagination_page: {
+    fr: 'Page',
+    en: 'Page',
+  },
+  pagination_pageOf: {
+    fr: 'sur',
+    en: 'of',
+  },
 };
 
