@@ -8,6 +8,8 @@ import { LocaleProvider } from '@/contexts/LocaleContext';
 import { MultiversxProvider } from '@/contexts/MultiversxContext';
 import { translations, DEFAULT_LOCALE } from '@/config/locales';
 
+const basePath = process.env.NEXT_PUBLIC_GITHUB_ACTIONS === 'true' ? '/appwallet' : '';
+
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
@@ -32,9 +34,9 @@ export const metadata: Metadata = {
   title: translations.appMetaTitle[DEFAULT_LOCALE],
   description: translations.appMetaDescription[DEFAULT_LOCALE],
   icons: {
-    icon: '/favicon.png', // Default favicon
-    shortcut: '/favicon.png', // For older browsers/IE
-    apple: '/favicon.png', // For Apple touch icon (iOS home screen, Safari tab icon)
+    icon: `${basePath}/favicon.png`, // Default favicon
+    shortcut: `${basePath}/favicon.png`, // For older browsers/IE
+    apple: `${basePath}/favicon.png`, // For Apple touch icon (iOS home screen, Safari tab icon)
     // You can add more specific sizes if you have them, e.g.:
     // other: [
     //   { rel: 'apple-touch-icon-precomposed', url: '/apple-touch-icon.png' }, // Older Apple

@@ -12,8 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@genkit-ai/googleai": "^1.9.1",
-    "@genkit-ai/next": "^1.9.1",
     "@hookform/resolvers": "^3.9.0",
     "@multiversx/sdk-core": "^15.4.0",
     "@multiversx/sdk-extension-provider": "^5.1.2",
@@ -38,7 +36,6 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
-    "@tanstack-query-firebase/react": "^1.0.6",
     "@tanstack/react-query": "^5.68.0",
     "axios": "^1.15.0",
     "bignumber.js": "^10.0.2",
@@ -46,8 +43,6 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
-    "firebase": "^11.10.0",
-    "genkit": "^1.9.1",
     "lucide-react": "^0.490.0",
     "next": "15.3.5",
     "patch-package": "^8.0.0",
@@ -64,7 +59,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "genkit-cli": "^1.9.1",
     "postcss": "^8.4.40",
     "tailwindcss": "^3.4.10",
     "typescript": "^5"
