@@ -13,11 +13,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useLocale } from '@/contexts/LocaleContext';
+import { useMultiversx } from '@/contexts/MultiversxContext';
 import logoSrc from '../../public/vosdecisions-logo.png';
 
 
 export default function HomePage() {
   const { t, locale } = useLocale();
+  const { isConnected, balance } = useMultiversx();
   const [showFileHashCalculator, setShowFileHashCalculator] = useState(true);
   const [showVmQueryTool, setShowVmQueryTool] = useState(false);
   const [hashForQuery, setHashForQuery] = useState<string | null>(null);
@@ -48,6 +50,12 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col items-center p-4 md:p-8 bg-background">
       <div className="w-full flex justify-end items-center space-x-4 mb-4 mt-2">
         <div className="flex items-center space-x-2">
+          {isConnected && (
+            <div className="flex items-center px-3 py-1 bg-white border border-border rounded-md shadow-sm mr-2 h-9 text-sm">
+              <span className="text-gray-500 mr-2">{t('wallet_balanceLabel')} :</span>
+              <span className="font-semibold text-cyan-600">{balance} EGLD</span>
+            </div>
+          )}
           <LocaleSwitcher />
           <EnvironmentSwitcher />
         </div>

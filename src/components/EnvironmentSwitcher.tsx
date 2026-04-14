@@ -18,15 +18,29 @@ import {
 } from "@/components/ui/popover";
 import { ChevronDown } from 'lucide-react';
 import { useLocale } from '@/contexts/LocaleContext';
+import { useMultiversx } from '@/contexts/MultiversxContext';
+import { Badge } from '@/components/ui/badge';
 
 export default function EnvironmentSwitcher() {
   const { selectedEnvironment, setSelectedEnvironment } = useEnvironment();
+  const { isConnected } = useMultiversx();
   const { t } = useLocale();
 
   const handleValueChange = (value: string) => {
     setSelectedEnvironment(value as EnvironmentKey);
     // Consider closing the popover here if needed, by managing Popover's open state
   };
+
+  if (isConnected) {
+    return (
+      <div className="flex items-center px-3 py-1 rounded-md shadow-sm bg-card border border-border">
+        <span className="text-xs font-medium text-gray-500 mr-2">{t('environmentSwitcher_connectedTo')}</span>
+        <Badge variant="secondary" className="bg-cyan-100 text-cyan-700 hover:bg-cyan-100 border-none capitalize h-6">
+          {ENVIRONMENTS[selectedEnvironment].label}
+        </Badge>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center p-1 rounded-md shadow-sm bg-card border border-border">

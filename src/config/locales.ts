@@ -240,5 +240,13 @@ export const translations: Record<string, Record<Locale, string>> = {
     fr: 'Sélectionner l\'Environnement',
     en: 'Select Environment',
   },
+  environmentSwitcher_connectedTo: {
+    fr: 'Connecté sur',
+    en: 'Connected to',
+  },
+  wallet_balanceLabel: {
+    fr: 'Solde',
+    en: 'Balance',
+  },
 };
 
