@@ -280,5 +280,21 @@ export const translations: Record<string, Record<Locale, string>> = {
     fr: 'sur',
     en: 'of',
   },
+  connectWallet: {
+    fr: 'Connecter Portefeuille',
+    en: 'Connect Wallet',
+  },
+  disconnect: {
+    fr: 'Déconnecter',
+    en: 'Disconnect',
+  },
+  connect_a_wallet: {
+    fr: 'Connecter un portefeuille',
+    en: 'Connect a wallet',
+  },
+  options: {
+    fr: 'Options',
+    en: 'Options',
+  },
 };
 
