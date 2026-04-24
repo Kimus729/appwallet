@@ -318,7 +318,7 @@ export default function VmQueryForm({ initialArg0, onInitialArgConsumed, isAutoM
                                   displayValue = `${t('vmQuery_invalidNumberForTimestampText')} ${numericValue.toString()}`;
                                   hasError = true;
                               } else {
-                                  const date = new Date(timestampSeconds * 1000); 
+                                  const date = new Date(timestampSeconds); 
                                   if (isNaN(date.getTime())) {
                                       displayValue = `${t('vmQuery_invalidDateFromTimestampText')} ${timestampSeconds}`;
                                       hasError = true;
