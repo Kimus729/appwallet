@@ -148,15 +148,17 @@ export default function HomePage() {
         )}
       </div>
       <footer className="w-full max-w-3xl mt-auto py-6 sm:py-8 border-t border-border/30 flex flex-row items-center justify-between px-2 gap-2">
-        <div className="flex-1 flex justify-start">
+        <div className="flex-1 flex justify-start min-w-0">
           <EnvironmentSwitcher />
         </div>
-        <div className="flex-[2] flex justify-center">
+        <div className="flex-shrink-0 px-2">
           <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
             {t('footerCopyright')}
           </p>
         </div>
-        <div className="flex-1 hidden sm:flex"></div>
+        <div className="flex-1 flex justify-end">
+          {/* Balancing element for centering */}
+        </div>
       </footer>
     </div>
   );
