@@ -48,17 +48,17 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 md:p-8 bg-background">
-      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 mt-2 px-2 md:px-0">
-        <div className="flex items-center space-x-2 order-2 sm:order-1 w-full sm:w-auto justify-center sm:justify-start">
+      <div className="w-full flex flex-row justify-between items-center gap-2 mb-4 mt-2 px-2 md:px-0">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           {isConnected && (
-            <div className="flex items-center px-3 py-1 bg-white border border-border rounded-md shadow-sm h-9 text-sm">
-              <span className="text-gray-500 mr-2">{t('wallet_balanceLabel')} :</span>
+            <div className="flex items-center px-2 sm:px-3 py-1 bg-white border border-border rounded-md shadow-sm h-9 text-[10px] sm:text-sm whitespace-nowrap">
+              <span className="hidden xs:inline text-gray-500 mr-1">{t('wallet_balanceLabel')} :</span>
               <span className="font-semibold text-cyan-600">{balance} EGLD</span>
             </div>
           )}
           <LocaleSwitcher />
         </div>
-        <div className="order-1 sm:order-2">
+        <div className="flex-shrink-0">
           <MultiversxWalletButton />
         </div>
       </div>
@@ -147,13 +147,16 @@ export default function HomePage() {
           ) : null
         )}
       </div>
-      <footer className="w-full max-w-3xl mt-auto py-8 flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-border/30">
-        <div className="order-2 sm:order-1">
+      <footer className="w-full max-w-3xl mt-auto py-6 sm:py-8 border-t border-border/30 flex flex-row items-center justify-between px-2 gap-2">
+        <div className="flex-1 flex justify-start">
           <EnvironmentSwitcher />
         </div>
-        <div className="order-1 sm:order-2 text-center sm:text-right">
-          <p className="text-xs text-muted-foreground">{t('footerCopyright')}</p>
+        <div className="flex-[2] flex justify-center">
+          <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
+            {t('footerCopyright')}
+          </p>
         </div>
+        <div className="flex-1 hidden sm:flex"></div>
       </footer>
     </div>
   );
