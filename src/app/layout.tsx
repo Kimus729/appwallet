@@ -5,7 +5,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { EnvironmentProvider } from '@/contexts/EnvironmentContext';
 import { LocaleProvider } from '@/contexts/LocaleContext';
-import { MultiversxProvider } from '@/contexts/MultiversxContext';
+import { DappInit } from '@/components/DappInit';
 import { translations, DEFAULT_LOCALE } from '@/config/locales';
 
 const inter = Inter({
@@ -48,9 +48,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${kanit.variable} ${dmSerifDisplay.variable} font-genos antialiased`}>
         <EnvironmentProvider>
           <LocaleProvider>
-            <MultiversxProvider>
-              {children}
-            </MultiversxProvider>
+            {/* sdk-dapp v5 initialization — client-only, no SSR */}
+            <DappInit />
+            {children}
           </LocaleProvider>
         </EnvironmentProvider>
         <Toaster />

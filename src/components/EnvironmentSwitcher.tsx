@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/popover";
 import { ChevronDown } from 'lucide-react';
 import { useLocale } from '@/contexts/LocaleContext';
-import { useMultiversx } from '@/contexts/MultiversxContext';
+import { useGetIsLoggedIn } from '@multiversx/sdk-dapp/out/react/account/useGetIsLoggedIn';
 import { Badge } from '@/components/ui/badge';
 
 export default function EnvironmentSwitcher() {
   const { selectedEnvironment, setSelectedEnvironment } = useEnvironment();
-  const { isConnected } = useMultiversx();
+  const isConnected = useGetIsLoggedIn();
   const { t } = useLocale();
 
   const handleValueChange = (value: string) => {
