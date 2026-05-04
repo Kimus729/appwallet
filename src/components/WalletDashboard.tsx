@@ -11,12 +11,18 @@ import { ImageIcon, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import axios from 'axios';
 
+interface Media {
+  url: string;
+  thumbnailUrl?: string;
+}
+
 interface Nft {
   identifier: string;
   collection: string;
   name: string;
   url?: string;
   thumbnailUrl?: string;
+  media?: Media[];
   balance: string;
 }
 
@@ -31,6 +37,7 @@ export function WalletDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [totalNfts, setTotalNfts] = useState(0);
   const [page, setPage] = useState(1);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const pageSize = 18;
 
   useEffect(() => {
@@ -61,6 +68,29 @@ export function WalletDashboard() {
     }
   }, [fetchNfts, mounted, isLoggedIn]);
 
+  const getImageUrl = (nft: Nft) => {
+    // Priority order: thumbnailUrl -> url -> media[0].thumbnailUrl -> media[0].url
+    let url = nft.thumbnailUrl || nft.url;
+    
+    if (!url && nft.media && nft.media.length > 0) {
+      url = nft.media[0].thumbnailUrl || nft.media[0].url;
+    }
+
+    if (!url) return '';
+
+    // Handle IPFS protocol
+    if (url.startsWith('ipfs://')) {
+      const converted = url.replace('ipfs://', 'https://ipfs.io/ipfs/');
+      console.log(`[WalletDashboard] Converted IPFS URL for ${nft.identifier}:`, converted);
+      return converted;
+    }
+
+    return url;
+  };
+  const handleImageError = (identifier: string) => {
+    setImageErrors((prev) => ({ ...prev, [identifier]: true }));
+  };
+
   const totalPages = Math.ceil(totalNfts / pageSize);
 
   // Only render after client mount and when logged in
@@ -87,29 +117,34 @@ export function WalletDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                {nfts.map((nft: Nft) => (
-                  <div
-                    key={nft.identifier}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-sm hover:shadow-md"
-                  >
-                    <div className="aspect-square relative flex items-center justify-center bg-gray-100">
-                      {nft.thumbnailUrl || nft.url ? (
-                        <Image
-                          src={nft.thumbnailUrl || nft.url || ''}
-                          alt={nft.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          unoptimized
-                        />
-                      ) : (
-                        <ImageIcon className="h-8 w-8 text-gray-400" />
-                      )}
-                      {Number(nft.balance) > 1 && (
-                        <div className="absolute top-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded-full border border-gray-700">
-                          x{nft.balance}
-                        </div>
-                      )}
-                    </div>
+                {nfts.map((nft: Nft) => {
+                  const imageUrl = getImageUrl(nft);
+                  const hasError = imageErrors[nft.identifier];
+
+                  return (
+                    <div
+                      key={nft.identifier}
+                      className="bg-white rounded-xl border border-gray-200 overflow-hidden group hover:border-cyan-500/50 transition-colors shadow-sm hover:shadow-md"
+                    >
+                      <div className="aspect-square relative flex items-center justify-center bg-gray-100">
+                        {imageUrl && !hasError ? (
+                          <Image
+                            src={imageUrl}
+                            alt={nft.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            unoptimized
+                            onError={() => handleImageError(nft.identifier)}
+                          />
+                        ) : (
+                          <ImageIcon className="h-8 w-8 text-gray-400" />
+                        )}
+                        {Number(nft.balance) > 1 && (
+                          <div className="absolute top-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded-full border border-gray-700">
+                            x{nft.balance}
+                          </div>
+                        )}
+                      </div>
                     <div className="p-3">
                       <div className="text-xs text-cyan-600 mb-1 truncate">{nft.collection}</div>
                       <div className="text-sm font-medium text-gray-900 truncate" title={nft.name}>
@@ -117,7 +152,8 @@ export function WalletDashboard() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
