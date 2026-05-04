@@ -23,6 +23,7 @@ interface Nft {
   url?: string;
   thumbnailUrl?: string;
   media?: Media[];
+  uris?: string[];
   balance: string;
 }
 
@@ -69,24 +70,44 @@ export function WalletDashboard() {
   }, [fetchNfts, mounted, isLoggedIn]);
 
   const getImageUrl = (nft: Nft) => {
-    // Priority order: thumbnailUrl -> url -> media[0].thumbnailUrl -> media[0].url
-    let url = nft.thumbnailUrl || nft.url;
+    let url = '';
     
-    if (!url && nft.media && nft.media.length > 0) {
-      url = nft.media[0].thumbnailUrl || nft.media[0].url;
+    // 1. Priority: media[0].thumbnailUrl (official thumbnail service)
+    if (nft.media && nft.media.length > 0 && nft.media[0].thumbnailUrl) {
+      url = nft.media[0].thumbnailUrl;
+    } 
+    // 2. Priority: media[0].url (official asset service)
+    else if (nft.media && nft.media.length > 0 && nft.media[0].url) {
+      url = nft.media[0].url;
+    } 
+    // 3. Priority: Root thumbnailUrl
+    else if (nft.thumbnailUrl) {
+      url = nft.thumbnailUrl;
+    } 
+    // 4. Priority: Root url
+    else if (nft.url) {
+      url = nft.url;
+    } 
+    // 5. Fallback: Try decoding URIs
+    else if (nft.uris && nft.uris.length > 0) {
+      try {
+        // MultiversX API returns URIs as base64 encoded strings
+        url = atob(nft.uris[0]);
+      } catch (e) {
+        url = nft.uris[0];
+      }
     }
 
     if (!url) return '';
 
-    // Handle IPFS protocol
+    // Handle IPFS protocol and normalize to a public gateway
     if (url.startsWith('ipfs://')) {
-      const converted = url.replace('ipfs://', 'https://ipfs.io/ipfs/');
-      console.log(`[WalletDashboard] Converted IPFS URL for ${nft.identifier}:`, converted);
-      return converted;
+      return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
     }
 
     return url;
   };
+
   const handleImageError = (identifier: string) => {
     setImageErrors((prev) => ({ ...prev, [identifier]: true }));
   };
