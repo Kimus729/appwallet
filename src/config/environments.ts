@@ -6,8 +6,9 @@ export const ENVIRONMENTS = {
     api: 'https://devnet-api.multiversx.com',
     explorer: 'https://devnet-explorer.multiversx.com',
     label: 'Devnet',
-    defaultScAddress: 'erd1qqqqqqqqqqqqqpgq209g5ct99dcyjdxetdykgy92yqf0cnxf0qesc2aw9w',
+    defaultScAddress: 'erd1qqqqqqqqqqqqqpgqnw4z40lruvmkwvsx74zsx9fsaehsc6dx0qes007s7j',
     defaultFuncName: 'getPrintInfoFromHash',
+    chainId: 'D',
   },
   testnet: {
     gateway: 'https://testnet-gateway.multiversx.com',
@@ -16,6 +17,7 @@ export const ENVIRONMENTS = {
     label: 'Testnet',
     defaultScAddress: 'erd1qqqqqqqqqqqqqpgqgknuqz500yyedxkukz77v96n5fu4pv9j0qeseu25ch',
     defaultFuncName: 'getPrintInfoFromHash',
+    chainId: 'T',
   },
   mainnet: {
     gateway: 'https://gateway.multiversx.com',
@@ -25,6 +27,7 @@ export const ENVIRONMENTS = {
     // Using Testnet values as placeholders for Mainnet as per user request
     defaultScAddress: 'erd1qqqqqqqqqqqqqpgq80qxhwd9cp037sy9qfk204hkryzdl7jsld2swlj3eq',
     defaultFuncName: 'getPrintInfoFromHash',
+    chainId: '1',
   },
 };
 

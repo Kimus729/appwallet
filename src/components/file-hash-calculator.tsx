@@ -9,6 +9,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { UploadCloud, FileText, XCircle, AlertCircle, RefreshCw, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/contexts/LocaleContext'; // Import useLocale
+import { useGetAccount } from '@multiversx/sdk-dapp/out/react/account/useGetAccount';
+import { useGetIsLoggedIn } from '@multiversx/sdk-dapp/out/react/account/useGetIsLoggedIn';
+import { getAccountProvider } from '@multiversx/sdk-dapp/out/providers/helpers/accountProvider';
+import { TransactionManager } from '@multiversx/sdk-dapp/out/managers/TransactionManager';
+import { Address, Transaction } from '@multiversx/sdk-core/out';
+import { ApiNetworkProvider } from '@multiversx/sdk-core/out/networkProviders';
+import { useEnvironment } from '@/contexts/EnvironmentContext';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import axios from 'axios';
 
 interface FileHashCalculatorProps {
   onHashCalculated?: (hash: string) => void;
@@ -17,11 +27,18 @@ interface FileHashCalculatorProps {
 
 export default function FileHashCalculator({ onHashCalculated, onFileCleared }: FileHashCalculatorProps) {
   const { t } = useLocale(); // Get t function
+  const { currentConfig } = useEnvironment();
+  const account = useGetAccount();
+  const isLoggedIn = useGetIsLoggedIn();
+
   const [file, setFile] = useState<File | null>(null);
   const [hash, setHash] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const [fileType, setFileType] = useState("01"); // default "01" (Exclusive)
+  const [isWriting, setIsWriting] = useState(false);
 
   const calculateSHA256 = async (inputFile: File): Promise<string> => {
     const buffer = await inputFile.arrayBuffer();
@@ -51,7 +68,7 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
     } catch (e: any) {
       console.error("Hashing Error:", e);
       setError(e.message || 'An unexpected error occurred during hashing.');
-      setFile(null); 
+      setFile(null);
     } finally {
       setIsLoading(false);
     }
@@ -80,14 +97,14 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
       await processFile(droppedFile);
       event.dataTransfer.clearData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       await processFile(event.target.files[0]);
     } else {
-      await processFile(null); 
+      await processFile(null);
     }
   };
 
@@ -98,10 +115,70 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
     setIsLoading(false);
     const fileInput = document.getElementById('file-upload-input') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; 
+      fileInput.value = '';
     }
     if (onFileCleared) {
       onFileCleared();
+    }
+  };
+
+  const handleWrite = async () => {
+    if (!hash || !isLoggedIn || !account?.address) return;
+
+    setIsWriting(true);
+    try {
+      const data = `printInfo@${fileType}@${hash}`;
+
+      const tx = new Transaction({
+        value: BigInt(0),
+        data: new TextEncoder().encode(data),
+        sender: new Address(account.address),
+        receiver: new Address(currentConfig.defaultScAddress),
+        gasLimit: BigInt(10000000), // Safe default for simulation
+        gasPrice: BigInt(1000000000), // Default 1 Gwei
+        chainID: currentConfig.chainId,
+        nonce: BigInt(account.nonce)
+      });
+
+      // Gas estimation using ApiNetworkProvider as per documentation
+      try {
+        const apiProvider = new ApiNetworkProvider(currentConfig.api);
+        const costResponse = await apiProvider.estimateTransactionCost(tx);
+        
+        if (costResponse && costResponse.gasLimit) {
+          const estimatedGas = costResponse.gasLimit;
+          // Use estimated value + 5% as requested
+          const calculatedGasLimit = BigInt(Math.ceil(estimatedGas * 1.05));
+          tx.gasLimit = calculatedGasLimit;
+          console.log(`[FileHashCalculator] Gas estimated: ${estimatedGas}, setting gasLimit: ${calculatedGasLimit}`);
+        }
+      } catch (estError) {
+        console.warn("[FileHashCalculator] Gas estimation failed, falling back to default limit:", estError);
+        // If estimation fails, we keep the high default of 10M to be safe
+      }
+
+      const provider = getAccountProvider();
+      const signedTransactions = await provider.signTransactions([tx]);
+
+      const txManager = TransactionManager.getInstance();
+      const sentTransactions = await txManager.send(signedTransactions);
+      await txManager.track(sentTransactions, {
+        transactionsDisplayInfo: {
+          processingMessage: t('fileHash_writingTx'),
+          errorMessage: t('fileHash_errorTitle'),
+          successMessage: t('fileHash_writeSuccess'),
+        },
+        onSuccess: async () => {
+          if (onHashCalculated && hash) {
+            onHashCalculated(hash);
+          }
+        }
+      });
+    } catch (e: any) {
+      console.error("Transaction Error:", e);
+      setError(e.message || 'An unexpected error occurred during transaction.');
+    } finally {
+      setIsWriting(false);
     }
   };
 
@@ -150,16 +227,16 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
         {file && !error && (
           <div className="p-4 border rounded-md bg-card space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 min-w-0">
-                    <FileText className="h-5 w-5 text-primary shrink-0" />
-                    <span className="text-sm font-medium truncate" title={file.name}>{file.name}</span>
-                    <span className="text-xs text-muted-foreground shrink-0">({(file.size / 1024).toFixed(2)} KB)</span>
-                </div>
-                <Button variant="ghost" size="icon" onClick={clearFile} aria-label={t('fileHash_clearFile')} title={t('fileHash_clearFile')} className="text-muted-foreground hover:text-destructive shrink-0">
-                    <XCircle className="h-5 w-5" />
-                </Button>
+              <div className="flex items-center space-x-2 min-w-0">
+                <FileText className="h-5 w-5 text-primary shrink-0" />
+                <span className="text-sm font-medium truncate" title={file.name}>{file.name}</span>
+                <span className="text-xs text-muted-foreground shrink-0">({(file.size / 1024).toFixed(2)} KB)</span>
+              </div>
+              <Button variant="ghost" size="icon" onClick={clearFile} aria-label={t('fileHash_clearFile')} title={t('fileHash_clearFile')} className="text-muted-foreground hover:text-destructive shrink-0">
+                <XCircle className="h-5 w-5" />
+              </Button>
             </div>
-            
+
             {isLoading && (
               <div className="flex items-center text-sm text-muted-foreground">
                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -175,9 +252,44 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
                 </pre>
               </div>
             )}
+
+            {hash && !isLoading && isLoggedIn && (
+              <div className="pt-4 mt-4 border-t space-y-4">
+                <Button
+                  onClick={handleWrite}
+                  disabled={isWriting}
+                  className="w-full sm:w-auto"
+                >
+                  {isWriting ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      {t('fileHash_writingTx')}
+                    </>
+                  ) : (
+                    t('fileHash_writeButton')
+                  )}
+                </Button>
+
+                <RadioGroup
+                  defaultValue="01"
+                  value={fileType}
+                  onValueChange={setFileType}
+                  className="flex flex-col space-y-1"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="01" id="r1" />
+                    <Label htmlFor="r1">{t('fileHash_exclusive')}</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="02" id="r2" />
+                    <Label htmlFor="r2">{t('fileHash_duplicable')}</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
           </div>
         )}
-         {!file && !error && !isLoading && (
+        {!file && !error && !isLoading && (
           <div className="text-center text-sm text-muted-foreground py-4">
             {t('fileHash_noFileSelected')}
           </div>

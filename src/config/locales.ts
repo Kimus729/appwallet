@@ -78,6 +78,26 @@ export const translations: Record<string, Record<Locale, string>> = {
     fr: 'Aucun fichier sélectionné.',
     en: 'No file selected.',
   },
+  fileHash_writeButton: {
+    fr: 'Ecrire',
+    en: 'Print',
+  },
+  fileHash_exclusive: {
+    fr: 'Exclusif',
+    en: 'Exclusive',
+  },
+  fileHash_duplicable: {
+    fr: 'Duplicable',
+    en: 'Duplicable',
+  },
+  fileHash_writingTx: {
+    fr: 'Ecriture en cours...',
+    en: 'Writing...',
+  },
+  fileHash_writeSuccess: {
+    fr: 'Transaction envoyée',
+    en: 'Transaction sent',
+  },
 
   // For vm-query-form.tsx
   vmQuery_smartContractAddress: {

@@ -8,6 +8,7 @@
 import { initApp } from '@multiversx/sdk-dapp/out/methods/initApp/initApp';
 import type { InitAppType } from '@multiversx/sdk-dapp/out/methods/initApp/initApp.types';
 import { EnvironmentsEnum } from '@multiversx/sdk-dapp/out/types/enums.types';
+import { ENVIRONMENTS } from '@/config/environments';
 
 // Map our environment keys to sdk-dapp EnvironmentsEnum
 const ENV_MAP: Record<string, EnvironmentsEnum> = {
@@ -32,6 +33,14 @@ export async function initSdkDapp(): Promise<void> {
     },
     dAppConfig: {
       environment,
+      network: {
+        apiAddress: ENVIRONMENTS[savedEnv as keyof typeof ENVIRONMENTS].api,
+        gasStationMetadata: {
+          0: { fast: 1000000000, faster: 1000000000 },
+          1: { fast: 1000000000, faster: 1000000000 },
+          2: { fast: 1000000000, faster: 1000000000 }
+        }
+      },
       nativeAuth: {
         expirySeconds: 3600,                   // 1 hour session
         tokenExpirationToastWarningSeconds: 60, // warn 1 min before logout
