@@ -127,7 +127,7 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
 
     setIsWriting(true);
     try {
-      const data = `printInfo@${fileType}@${hash}`;
+      const data = `print@${fileType}@${hash}`;
 
       const tx = new Transaction({
         value: BigInt(0),
@@ -144,7 +144,7 @@ export default function FileHashCalculator({ onHashCalculated, onFileCleared }: 
       try {
         const apiProvider = new ApiNetworkProvider(currentConfig.api);
         const costResponse = await apiProvider.estimateTransactionCost(tx);
-        
+
         if (costResponse && costResponse.gasLimit) {
           const estimatedGas = costResponse.gasLimit;
           // Use estimated value + 5% as requested
